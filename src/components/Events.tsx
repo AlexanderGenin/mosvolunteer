@@ -3,8 +3,6 @@ import type { FC } from "react";
 import {
   FormLayout,
   FormItem,
-  Input,
-  IconButton,
   Group,
   View,
   PanelHeader,
@@ -16,28 +14,29 @@ import {
   ContentCard,
   MiniInfoCell,
   Button,
+  Placeholder,
 } from "@vkontakte/vkui";
 import {
-  Icon16Search,
   Icon20CalendarCircleFillRed,
   Icon20PlaceOutline,
   Icon28AddOutline,
   Icon28SlidersOutline,
 } from "@vkontakte/icons";
 import { useAdaptivityIsDesktop } from "@vkontakte/vkui/dist/hooks/useAdaptivity";
-import type { TEvent } from "../types/types";
+import type { EventData, TEvent } from "../types/types";
 import Filters from "./Filters";
 import { formatDate } from "../utils/utils";
 import Event from "./Event";
 import useEvents from "../redux/hooks/useEvents";
 import { useFilters } from "../hooks/useFilters";
 import useAuth from "../hooks/useAuth";
+import AddEvent from "./AddEvent";
 
 type Props = {
   id: string;
 };
 
-type Panels = "filters" | "events" | "event";
+type Panels = "filters" | "events" | "event" | "addEvent";
 
 const Events: FC<Props> = ({ id }) => {
   const isDesktop = useAdaptivityIsDesktop();
@@ -58,26 +57,32 @@ const Events: FC<Props> = ({ id }) => {
     setPanel("events");
   };
 
+  const handleEventFormSave = (formData: EventData) => {
+    addEvent(formData);
+  };
+
   const {
     defaultTags,
     datesFilter,
     tagsFilter,
+    search,
     onDatesFilterChange,
     onTagsFilterChange,
     onClearFilters,
+    onSearchChange,
   } = useFilters();
 
-  const { events, loadEvents } = useEvents();
+  const { events, loadEvents, addEvent } = useEvents();
 
   useEffect(() => {
     loadEvents({
-      dateStart: formatDate(datesFilter[0]) || "",
-      dateEnd: formatDate(datesFilter[1]) || "",
-      tags: tagsFilter.map((tag) => tag.value).join(",") || "",
-      query: "",
+      date_start: formatDate(datesFilter[0]) || "",
+      date_end: formatDate(datesFilter[1]) || "",
+      tags: tagsFilter.map((tag) => tag.value).join("-"),
+      query: search,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datesFilter[0], datesFilter[1], tagsFilter.length]);
+  }, [datesFilter[0], datesFilter[1], tagsFilter.length, search]);
 
   return (
     <View id={id} activePanel={panel}>
@@ -94,71 +99,73 @@ const Events: FC<Props> = ({ id }) => {
         >
           События
         </PanelHeader>
-        <Group>
-          <FormLayout>
-            <FormItem>
-              <Input
-                type="text"
-                placeholder="Поиск"
-                after={
-                  <IconButton hoverMode="opacity" aria-label="Очистить поле">
-                    <Icon16Search />
-                  </IconButton>
-                }
-              />
-            </FormItem>
-            {isAdmin && (
+        {isAdmin && (
+          <Group>
+            <FormLayout>
               <FormItem>
                 <Button
                   before={<Icon28AddOutline />}
                   mode="primary"
                   size="l"
                   stretched
+                  onClick={() => setPanel("addEvent")}
                 >
                   Создать событие
                 </Button>
               </FormItem>
-            )}
-          </FormLayout>
-        </Group>
+            </FormLayout>
+          </Group>
+        )}
         <Group>
           <Header>Варианты</Header>
-          <CardGrid size={isDesktop ? "m" : "l"}>
-            {events.map((event) => (
-              <ContentCard
-                onClick={() => handleCardClick(event)}
-                key={event.id}
-                src={event.imgs[0]}
-                header={
-                  event.title.length > 50
-                    ? event.title.slice(0, 48) + "..."
-                    : event.title
-                }
-                text={
-                  event.description.length > 100
-                    ? event.description.slice(0, 98) + "..."
-                    : event.description
-                }
-                maxHeight={300}
-                caption={
-                  <>
-                    <MiniInfoCell
-                      className="event_info"
-                      before={<Icon20CalendarCircleFillRed />}
-                    >
-                      {event.dateStart} - {event.dateEnd}
-                    </MiniInfoCell>
-                    <MiniInfoCell
-                      className="event_info"
-                      before={<Icon20PlaceOutline />}
-                    >
-                      {event.address}
-                    </MiniInfoCell>
-                  </>
-                }
-              />
-            ))}
-          </CardGrid>
+          {events.length ? (
+            <CardGrid size={isDesktop ? "m" : "l"}>
+              {events.map((event) => (
+                <ContentCard
+                  onClick={() => handleCardClick(event)}
+                  key={event.id}
+                  src={event.imgs?.[0]}
+                  header={
+                    event.title?.length > 50
+                      ? event.title.slice(0, 48) + "..."
+                      : event.title
+                  }
+                  text={
+                    event.description?.length > 100
+                      ? event.description.slice(0, 98) + "..."
+                      : event.description
+                  }
+                  maxHeight={300}
+                  caption={
+                    <>
+                      <MiniInfoCell
+                        className="event_info"
+                        before={<Icon20CalendarCircleFillRed />}
+                      >
+                        {event.date_start?.slice(0, 10)} -{" "}
+                        {event.date_end?.slice(0, 10)}
+                      </MiniInfoCell>
+                      <MiniInfoCell
+                        className="event_info"
+                        before={<Icon20PlaceOutline />}
+                      >
+                        {event.address}
+                      </MiniInfoCell>
+                    </>
+                  }
+                />
+              ))}
+            </CardGrid>
+          ) : (
+            <Placeholder
+              header="По вашему запросы событий не найдено"
+              action={
+                <Button mode="tertiary" onClick={() => setPanel("filters")}>
+                  К фильтрам
+                </Button>
+              }
+            />
+          )}
         </Group>
       </Panel>
       <Panel id="filters">
@@ -173,12 +180,19 @@ const Events: FC<Props> = ({ id }) => {
           eventsCount={events.length}
           defaultTags={defaultTags}
           selectedTags={tagsFilter}
+          onSearchChange={onSearchChange}
           onTagsFilterChange={onTagsFilterChange}
           onClearFilters={onClearFilters}
           onSubmitFilters={handleSubmitFilters}
         />
       </Panel>
       <Event id="event" onReturn={handleReturn} event={currentEvent} />
+      <AddEvent
+        id="addEvent"
+        onReturn={handleReturn}
+        onEventFormCancel={handleReturn}
+        onEventFormSave={handleEventFormSave}
+      />
     </View>
   );
 };

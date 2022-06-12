@@ -1,6 +1,10 @@
 import { useSelector } from "react-redux";
-import { EventsFilters } from "../../types/types";
-import { fetchEvents, selectAllEvents } from "../features/events/eventsSlice";
+import { EventData, EventsFilters } from "../../types/types";
+import {
+  addNewEvent,
+  fetchEvents,
+  selectAllEvents,
+} from "../features/eventsSlice";
 import { useAppDispatch } from "../store/store";
 
 const useEvents = () => {
@@ -9,6 +13,7 @@ const useEvents = () => {
 
   return {
     events,
+    addEvent: (newEvent: EventData) => dispatch(addNewEvent(newEvent)),
     loadEvents: (filters: EventsFilters) => dispatch(fetchEvents(filters)),
   };
 };

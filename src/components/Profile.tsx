@@ -25,10 +25,13 @@ import {
   Icon28ChainOutline,
   Icon56UserCircleOutline,
   Icon28DoorArrowRightOutline,
+  Icon28UserStarBadgeOutline,
+  Icon28BillheadOutline,
 } from "@vkontakte/icons";
 import bridge from "@vkontakte/vk-bridge";
 import Form from "./Form";
-import useUser from "./useUser";
+import useUser from "../hooks/useUser";
+import useAuth from "../hooks/useAuth";
 
 type Props = {
   id: string;
@@ -45,6 +48,8 @@ const Profile: FC<Props> = ({
   id,
   onLogout,
 }) => {
+  const { isAdmin } = useAuth();
+
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleFormCancel = () => {
@@ -122,26 +127,40 @@ const Profile: FC<Props> = ({
             </>
           )}
         </Group>
-        <Group header={<Header mode="primary">Книжка волонтера</Header>}>
-          <SimpleCell
-            indicator={volunteer.title}
-            before={<Icon28CrownOutline />}
-          >
-            Ранг
-          </SimpleCell>
-          <SimpleCell
-            indicator={volunteer.workedHours}
-            before={<Icon28RecentOutline />}
-          >
-            Часов помощи
-          </SimpleCell>
-          <SimpleCell
-            indicator={volunteer.events}
-            before={<Icon28HeartCircleOutline />}
-          >
-            Посещено мероприятий
-          </SimpleCell>
-        </Group>
+        {isAdmin ? (
+          <Group header={<Header mode="primary">Информация</Header>}>
+            <SimpleCell
+              indicator={"Организатор"}
+              before={<Icon28UserStarBadgeOutline />}
+            >
+              Доступ
+            </SimpleCell>
+            <SimpleCell indicator={3} before={<Icon28BillheadOutline />}>
+              Ваши мероприятия
+            </SimpleCell>
+          </Group>
+        ) : (
+          <Group header={<Header mode="primary">Книжка волонтера</Header>}>
+            <SimpleCell
+              indicator={volunteer.title}
+              before={<Icon28CrownOutline />}
+            >
+              Ранг
+            </SimpleCell>
+            <SimpleCell
+              indicator={volunteer.workedHours}
+              before={<Icon28RecentOutline />}
+            >
+              Часов помощи
+            </SimpleCell>
+            <SimpleCell
+              indicator={volunteer.events}
+              before={<Icon28HeartCircleOutline />}
+            >
+              Посещено мероприятий
+            </SimpleCell>
+          </Group>
+        )}
         <Group header={<Header mode="primary">Действия</Header>}>
           <CellButton
             before={<Icon28LogoVkOutline />}

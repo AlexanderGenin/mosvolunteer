@@ -18,3 +18,10 @@ export const getOneYearDateRange = () => {
   oneMonthFromToday.setFullYear(oneMonthFromToday.getFullYear() + 1);
   return [today, oneMonthFromToday];
 };
+
+export const prepareSearchParams = (obj: Record<string, any>) => {
+  const encodedFilters = Object.entries(obj).filter(
+    (entry) => entry[1] !== undefined && entry[1] !== null
+  );
+  return new URLSearchParams(encodedFilters).toString();
+};

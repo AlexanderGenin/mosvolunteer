@@ -1,13 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { mockEvents } from "../../../data/data";
-import { EventsFilters, TEvent } from "../../../types/types";
-import { client } from "../../api/client";
-import { RootState } from "../../store/store";
+import { EventData, EventsFilters, TEvent } from "../../types/types";
+import { client } from "../api/client";
+import { RootState } from "../store/store";
+import { prepareSearchParams } from "../../utils/utils";
 
 type EventsState = {
   status: "error" | "success" | "idle" | "pending";
   error: string | null;
   events: TEvent[];
+};
+
+type EventState = {
+  status: "error" | "success" | "idle" | "pending";
+  error: string | null;
+  event: TEvent;
 };
 
 const initialState: EventsState = {
@@ -18,19 +24,26 @@ const initialState: EventsState = {
 
 export const fetchEvents = createAsyncThunk<TEvent[], EventsFilters>(
   "events/fetchEvents",
-  async (filters) => {
-    // const q = new URLSearchParams(filters).toString();
-    //   const response = await client.get('/fakeApi/events')
-    const response = await Promise.resolve({ data: mockEvents });
-    return response.data;
+  async (filters, thunkAPI) => {
+    try {
+      const q = prepareSearchParams(filters);
+      const response = await client.get(`events?${q}`);
+      return response.data;
+    } catch (e) {
+      console.error(e);
+    }
   }
 );
 
-export const addNewEvent = createAsyncThunk<TEvent, EventsState>(
+export const addNewEvent = createAsyncThunk<TEvent, EventData>(
   "events/addNewEvent",
-  async (initialEvent) => {
-    const response = await client.post("/fakeApi/events", initialEvent);
-    return response.data;
+  async (newEvent) => {
+    try {
+      const response = await client.post("events", newEvent);
+      return response.data;
+    } catch (e) {
+      console.error(e);
+    }
   }
 );
 

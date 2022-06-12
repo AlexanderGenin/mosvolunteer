@@ -1,5 +1,5 @@
 import { UserInfo } from "@vkontakte/vk-bridge";
-import { UserCustomData, Volunteer } from "../types/types";
+import { EventData, UserCustomData, Volunteer } from "../types/types";
 
 export const defaultUserCustomData: UserCustomData = {
   phone: "+7 916 123 45 67",
@@ -19,3 +19,14 @@ export const defaultUser = {
   first_name: "Иван",
   last_name: "Иванов",
 } as UserInfo;
+
+export const defaultEventData: EventData = {
+  date_start: "",
+  date_end: "",
+  title: "",
+  description: "",
+  email: "",
+  phone: "",
+  tags: [""],
+  vacancies: [],
+};

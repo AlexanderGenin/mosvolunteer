@@ -16,8 +16,8 @@ export type UserCustomData = {
 
 export type TEvent = {
   id: number;
-  dateStart: string;
-  dateEnd: string;
+  date_start: string;
+  date_end: string;
   address: string;
   imgs: string[];
   title: string;
@@ -55,8 +55,25 @@ export type TStory = {
 };
 
 export type EventsFilters = {
-  query: string;
-  dateStart: string;
-  dateEnd: string;
-  tags: string;
+  query?: string;
+  date_start?: string;
+  date_end?: string;
+  tags?: string;
+};
+
+export type EventData = {
+  date_start: string;
+  date_end: string;
+  title: string;
+  description: string;
+  email: string;
+  phone: string;
+  tags: string[];
+  vacancies: Vacancy[];
+};
+
+export type Vacancy = {
+  id: number;
+  name: string;
+  capacity: number;
 };

@@ -2,6 +2,7 @@ import React from "react";
 import type { FC } from "react";
 import type { TEvent } from "../types/types";
 import {
+  Banner,
   Button,
   Card,
   Div,
@@ -22,6 +23,7 @@ import {
 import {
   Icon20CalendarOutline,
   Icon20Check,
+  Icon28AdvertisingCircleFillRed,
   Icon28MailOutline,
   Icon28PhoneOutline,
   Icon56UserCircleOutline,
@@ -78,7 +80,7 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               className="event_dates"
               before={<Icon20CalendarOutline />}
             >
-              {event.dateStart} - {event.dateEnd}
+              {event.date_start} - {event.date_end}
             </MiniInfoCell>
             <Title className="event_title" level="1">
               {event.title}
@@ -92,6 +94,14 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               {req}
             </MiniInfoCell>
           ))}
+        </Group>
+        <Group>
+          {event.important && (
+            <Banner
+              before={<Icon28AdvertisingCircleFillRed />}
+              text={event.important}
+            />
+          )}
         </Group>
         <Group header={<Header mode="primary">Контакты</Header>}>
           <SimpleCell before={<Icon28MailOutline />}>{event.email}</SimpleCell>

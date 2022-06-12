@@ -5,6 +5,8 @@ export async function client(
   endpoint: string,
   { body, ...customConfig }: Record<string, any> = {}
 ) {
+  const baseUrl = "https://api.onixx.org/";
+
   const headers = { "Content-Type": "application/json" };
 
   const config = {
@@ -22,7 +24,7 @@ export async function client(
 
   let data;
   try {
-    const response = await window.fetch(endpoint, config);
+    const response = await window.fetch(`${baseUrl}${endpoint}`, config);
     data = await response.json();
     if (response.ok) {
       // Return a result object similar to Axios

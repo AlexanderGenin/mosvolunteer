@@ -13,7 +13,7 @@ import {
   Button,
 } from "@vkontakte/vkui";
 import { ChipsSelect } from "@vkontakte/vkui/dist/unstable";
-import { Icon16Clear } from "@vkontakte/icons";
+import { Icon16Clear, Icon16Search } from "@vkontakte/icons";
 import type { DateRange, TagOption } from "../types/types";
 import { formatDate } from "../utils/utils";
 
@@ -26,6 +26,7 @@ type Props = {
   eventsCount: number;
   onClearFilters: () => void;
   onSubmitFilters: () => void;
+  onSearchChange: (q: string) => void;
 };
 
 const Filters: FC<Props> = ({
@@ -37,6 +38,7 @@ const Filters: FC<Props> = ({
   eventsCount,
   onClearFilters,
   onSubmitFilters,
+  onSearchChange,
 }) => {
   const selectedTagsProps = {
     value: selectedTags,
@@ -52,10 +54,26 @@ const Filters: FC<Props> = ({
     onTagsFilterChange([]);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(e.currentTarget.value);
+  };
+
   return (
     <Group>
       <FormLayout>
         <FormLayoutGroup mode="vertical">
+          <FormItem top="Поиск">
+            <Input
+              type="text"
+              placeholder="Поиск"
+              onChange={handleSearchChange}
+              after={
+                <IconButton hoverMode="opacity" aria-label="Очистить поле">
+                  <Icon16Search />
+                </IconButton>
+              }
+            />
+          </FormItem>
           <FormItem top="Метки">
             <ChipsSelect
               {...selectedTagsProps}

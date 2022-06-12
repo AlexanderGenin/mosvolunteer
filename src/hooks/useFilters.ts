@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateRange, TagOption } from "../types/types";
 import { getOneYearDateRange } from "../utils/utils";
-import useTags from "./useTags";
+import useTags from "../redux/hooks/useTags";
 
 export const useFilters = () => {
-  const tags = useTags();
+  const { tags, loadTags } = useTags();
   const defaultTags = tags.map((tag) => ({ label: tag, value: tag }));
 
   const [datesFilter, setDatesFilter] = useState<DateRange>(
     getOneYearDateRange()
   );
   const [tagsFilter, setTagsFilter] = useState<TagOption[]>(defaultTags);
+
+  const [search, setSearch] = useState("");
 
   const handleDatesFilterChange = (dates: DateRange) => {
     setDatesFilter(dates);
@@ -23,14 +25,25 @@ export const useFilters = () => {
   const handleClearFilters = () => {
     setDatesFilter(getOneYearDateRange());
     setTagsFilter(defaultTags);
+    setSearch("");
   };
+
+  const handleSearchChange = (q: string) => {
+    setSearch(q);
+  };
+
+  useEffect(() => {
+    loadTags();
+  }, []);
 
   return {
     defaultTags,
     datesFilter,
     tagsFilter,
+    search,
     onDatesFilterChange: handleDatesFilterChange,
     onTagsFilterChange: handleTagsFilterChange,
     onClearFilters: handleClearFilters,
+    onSearchChange: handleSearchChange,
   };
 };

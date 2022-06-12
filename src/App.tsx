@@ -63,9 +63,15 @@ const App: FC = () => {
 
   useEffect(() => {
     async function fetchUser() {
-      const user = await bridge.send("VKWebAppGetUserInfo");
-      setUser(user);
-      setPopout(null);
+      try {
+        const user = await bridge.send("VKWebAppGetUserInfo");
+        setUser(user);
+        setPopout(null);
+      } catch (e) {
+        console.error(e);
+        setUser(null);
+        setPopout(null);
+      }
     }
 
     fetchUser();

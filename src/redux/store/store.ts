@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 
-import eventsReducer from "../features/events/eventsSlice";
+import eventsReducer from "../features/eventsSlice";
+import tagsReducer from "../features/tagsSlice";
 
 const store = configureStore({
   reducer: {
     events: eventsReducer,
+    tags: tagsReducer,
   },
 });
 

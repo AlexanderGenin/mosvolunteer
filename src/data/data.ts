@@ -11,8 +11,8 @@ export const mockVolunteer = {
 export const mockEvents: TEvent[] = [
   {
     id: 1,
-    dateStart: "2022-05-01",
-    dateEnd: "2022-12-31",
+    date_start: "2022-05-01",
+    date_end: "2022-12-31",
     address: "Город Москва",
     imgs: [
       "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80",
@@ -43,12 +43,12 @@ export const mockEvents: TEvent[] = [
   },
   {
     id: 2,
-    dateStart: "2022-05-01",
-    dateEnd: "2022-12-31",
+    date_start: "2022-05-01",
+    date_end: "2022-12-31",
     address: "Город Москва",
     imgs: [
-      "https://images.unsplash.com/photo-1593339915213-a94e3b1a0f64?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1337&q=80",
-      "https://images.unsplash.com/photo-1464998857633-50e59fbf2fe6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2369&q=80",
+      "https://images.unsplash.com/photo-1543333995-a78aea2eee50?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80",
+      "https://images.unsplash.com/photo-1609131257008-a5436a6238da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2296&q=80",
     ],
     title: "Региональный волонтёрский центр «Молоды душой»",
     description:
@@ -68,8 +68,8 @@ export const mockEvents: TEvent[] = [
   },
   {
     id: 3,
-    dateStart: "2022-07-07",
-    dateEnd: "2022-07-10",
+    date_start: "2022-07-07",
+    date_end: "2022-07-10",
     address:
       "г. Москва, ул. Проспект Мира, д. 119, стр. 2, павильон №2 «Робостанция»",
     imgs: [
