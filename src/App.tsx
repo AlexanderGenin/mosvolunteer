@@ -20,18 +20,21 @@ import Events from "./components/Events";
 import { defaultUserCustomData, defaultVolunteerData } from "./data/defaults";
 import Stories from "./components/Stories";
 import useStories from "./hooks/useStories";
-import UserProvider from "./components/UserProvider";
+import UserProvider from "./providers/UserProvider";
 import store from "./redux/store/store";
 
 import "@vkontakte/vkui/dist/vkui.css";
 import "@vkontakte/vkui/dist/components.css";
 import "./styles/customStyle.css";
 import Welcome from "./components/Welcome";
+import useAuth from "./hooks/useAuth";
 
 const App: FC = () => {
   const [popout, setPopout] = useState<ReactElement | null>(
     <ScreenSpinner size="large" />
   );
+
+  const { isLoggedIn, isAdmin, onLogin, onLogout } = useAuth();
 
   const [activeTab, setActiveTab] = useState<Tab>("posts");
 
@@ -54,18 +57,8 @@ const App: FC = () => {
     defaultUserCustomData
   );
 
-  const [showWelcome, setShowWelcome] = useState(true);
-
   const handleFormSave = (formData: UserCustomData) => {
     setUserCustomData(formData);
-  };
-
-  const handleLogin = () => {
-    setShowWelcome(false);
-  };
-
-  const handleLogout = () => {
-    setShowWelcome(true);
   };
 
   useEffect(() => {
@@ -77,6 +70,10 @@ const App: FC = () => {
 
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    setActiveTab(isAdmin ? "events" : "posts");
+  }, [isAdmin]);
 
   return (
     <Provider store={store}>
@@ -97,8 +94,8 @@ const App: FC = () => {
                 }
               >
                 <SplitCol>
-                  {showWelcome ? (
-                    <Welcome onLogin={handleLogin} />
+                  {!isLoggedIn ? (
+                    <Welcome onLogin={onLogin} />
                   ) : (
                     <Epic
                       activeStory={activeTab}
@@ -109,14 +106,16 @@ const App: FC = () => {
                         />
                       }
                     >
-                      <Posts id="posts" onStoryClick={onStoryClick} />
+                      {isAdmin ? null : (
+                        <Posts id="posts" onStoryClick={onStoryClick} />
+                      )}
                       <Events id="events" />
                       <Profile
                         id="profile"
                         userCustomData={userCustomData}
                         volunteer={volunteer}
                         onFormSave={handleFormSave}
-                        onLogout={handleLogout}
+                        onLogout={onLogout}
                       />
                     </Epic>
                   )}

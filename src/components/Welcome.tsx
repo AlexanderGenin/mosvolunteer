@@ -3,7 +3,7 @@ import React from "react";
 import type { FC } from "react";
 
 type Props = {
-  onLogin: () => void;
+  onLogin: (asAdmin: boolean) => void;
 };
 
 const Welcome: FC<Props> = ({ onLogin }) => {
@@ -14,7 +14,7 @@ const Welcome: FC<Props> = ({ onLogin }) => {
           size="l"
           mode="primary"
           className="welcome_button"
-          onClick={onLogin}
+          onClick={() => onLogin(false)}
         >
           Войти через ВКонтакте
         </Button>
@@ -24,11 +24,16 @@ const Welcome: FC<Props> = ({ onLogin }) => {
           className="welcome_button"
           href="https://mosvolonter.ru/"
           target="_blank"
-          onClick={onLogin}
+          onClick={() => onLogin(false)}
         >
           Войти через Мосволонтер
         </Button>
-        <Button size="l" mode="secondary" className="welcome_button">
+        <Button
+          size="l"
+          mode="secondary"
+          className="welcome_button"
+          onClick={() => onLogin(true)}
+        >
           Я организатор
         </Button>
       </ButtonGroup>

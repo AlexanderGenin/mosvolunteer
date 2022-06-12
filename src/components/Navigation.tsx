@@ -7,6 +7,7 @@ import {
   Icon28UserCircleOutline,
 } from "@vkontakte/icons";
 import { Tab } from "../types/types";
+import useAuth from "../hooks/useAuth";
 
 type Props = {
   onTabChange: (e: React.MouseEvent<HTMLElement>) => void;
@@ -14,16 +15,20 @@ type Props = {
 };
 
 const Navigation: FC<Props> = ({ onTabChange, activeTab }) => {
+  const { isAdmin } = useAuth();
+
   return (
     <Tabbar>
-      <TabbarItem
-        onClick={onTabChange}
-        selected={activeTab === "posts"}
-        data-tab="posts"
-        text="Новости"
-      >
-        <Icon28NewsfeedOutline />
-      </TabbarItem>
+      {!isAdmin && (
+        <TabbarItem
+          onClick={onTabChange}
+          selected={activeTab === "posts"}
+          data-tab="posts"
+          text="Новости"
+        >
+          <Icon28NewsfeedOutline />
+        </TabbarItem>
+      )}
       <TabbarItem
         onClick={onTabChange}
         selected={activeTab === "events"}

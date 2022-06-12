@@ -31,8 +31,8 @@ const StoriesGallery: FC<Props> = ({ story, onNextStory }) => {
 
   return (
     <Gallery slideIndex={slideIndex}>
-      {story.imgs.map((img) => (
-        <img src={img} alt="" onClick={handleNextSlide} />
+      {story.imgs.map((img, index) => (
+        <img src={img} alt="" onClick={handleNextSlide} key={index} />
       ))}
     </Gallery>
   );

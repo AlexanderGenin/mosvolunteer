@@ -15,11 +15,13 @@ import {
   Header,
   ContentCard,
   MiniInfoCell,
+  Button,
 } from "@vkontakte/vkui";
 import {
   Icon16Search,
   Icon20CalendarCircleFillRed,
   Icon20PlaceOutline,
+  Icon28AddOutline,
   Icon28SlidersOutline,
 } from "@vkontakte/icons";
 import { useAdaptivityIsDesktop } from "@vkontakte/vkui/dist/hooks/useAdaptivity";
@@ -29,6 +31,7 @@ import { formatDate } from "../utils/utils";
 import Event from "./Event";
 import useEvents from "../redux/hooks/useEvents";
 import { useFilters } from "../hooks/useFilters";
+import useAuth from "../hooks/useAuth";
 
 type Props = {
   id: string;
@@ -41,6 +44,8 @@ const Events: FC<Props> = ({ id }) => {
   const [panel, setPanel] = useState<Panels>("events");
 
   const [currentEvent, setCurrentEvent] = useState<TEvent | null>(null);
+
+  const { isAdmin } = useAuth();
 
   const handleCardClick = (event: TEvent) => {
     setCurrentEvent(event);
@@ -102,6 +107,18 @@ const Events: FC<Props> = ({ id }) => {
                 }
               />
             </FormItem>
+            {isAdmin && (
+              <FormItem>
+                <Button
+                  before={<Icon28AddOutline />}
+                  mode="primary"
+                  size="l"
+                  stretched
+                >
+                  Создать событие
+                </Button>
+              </FormItem>
+            )}
           </FormLayout>
         </Group>
         <Group>

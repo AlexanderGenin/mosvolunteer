@@ -76,7 +76,7 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
                 key={post.id}
                 subtitle={
                   <MiniInfoCell
-                    className="post-date"
+                    className="post_date"
                     before={<Icon20CalendarOutline />}
                   >
                     {post.date}
@@ -98,7 +98,7 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
                         ? post.description.slice(0, 148) + "..."
                         : post.description}
                     </Text>
-                    <Div className="post-link">
+                    <Div className="post_link">
                       <Link>Подробнее</Link>
                     </Div>
                   </>

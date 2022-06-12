@@ -26,6 +26,7 @@ import {
   Icon28PhoneOutline,
   Icon56UserCircleOutline,
 } from "@vkontakte/icons";
+import useAuth from "../hooks/useAuth";
 
 type Props = {
   id: string;
@@ -34,6 +35,8 @@ type Props = {
 };
 
 const Event: FC<Props> = ({ id, event, onReturn }) => {
+  const { isAdmin } = useAuth();
+
   if (!event)
     return (
       <Panel id={id}>
@@ -84,8 +87,10 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
           </Div>
         </Group>
         <Group header={<Header mode="primary">Требования</Header>}>
-          {event.requirements.map((req) => (
-            <MiniInfoCell before={<Icon20Check />}>{req}</MiniInfoCell>
+          {event.requirements.map((req, index) => (
+            <MiniInfoCell before={<Icon20Check />} key={index}>
+              {req}
+            </MiniInfoCell>
           ))}
         </Group>
         <Group header={<Header mode="primary">Контакты</Header>}>
@@ -98,9 +103,15 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               <Progress aria-labelledby="progresslabel" value={33.3} />
             </FormItem>
             <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              <Button size="l" appearance="accent">
-                Записаться
-              </Button>
+              {isAdmin ? (
+                <Button size="l" appearance="accent">
+                  Посмотреть заявки
+                </Button>
+              ) : (
+                <Button size="l" appearance="accent">
+                  Записаться
+                </Button>
+              )}
             </FormItem>
           </Group>
           <Group header={<Header mode="primary">Волонтер проводник</Header>}>
@@ -108,9 +119,15 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               <Progress aria-labelledby="progresslabel" value={50} />
             </FormItem>
             <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              <Button size="l" appearance="accent">
-                Записаться
-              </Button>
+              {isAdmin ? (
+                <Button size="l" appearance="accent">
+                  Посмотреть заявки
+                </Button>
+              ) : (
+                <Button size="l" appearance="accent">
+                  Записаться
+                </Button>
+              )}
             </FormItem>
           </Group>
           <Group header={<Header mode="primary">Менеджер команд</Header>}>
@@ -118,9 +135,15 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               <Progress aria-labelledby="progresslabel" value={100} />
             </FormItem>
             <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              <Button size="l" appearance="accent" disabled>
-                Запись завершена
-              </Button>
+              {isAdmin ? (
+                <Button size="l" appearance="accent">
+                  Посмотреть заявки
+                </Button>
+              ) : (
+                <Button size="l" appearance="accent" disabled>
+                  Запись завершена
+                </Button>
+              )}
             </FormItem>
           </Group>
         </Group>
