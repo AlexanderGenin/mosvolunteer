@@ -126,13 +126,13 @@ const Events: FC<Props> = ({ id }) => {
                 caption={
                   <>
                     <MiniInfoCell
-                      className="event-card_info"
+                      className="event_info"
                       before={<Icon20CalendarCircleFillRed />}
                     >
                       {event.dateStart} - {event.dateEnd}
                     </MiniInfoCell>
                     <MiniInfoCell
-                      className="event-card_info"
+                      className="event_info"
                       before={<Icon20PlaceOutline />}
                     >
                       {event.address}

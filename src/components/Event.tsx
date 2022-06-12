@@ -66,8 +66,8 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
       <Card>
         <Group>
           <Gallery bullets="dark" showArrows>
-            {event.imgs.map((img) => (
-              <img src={img} alt="" />
+            {event.imgs.map((img, index) => (
+              <img src={img} alt="" key={index} />
             ))}
           </Gallery>
           <Div>

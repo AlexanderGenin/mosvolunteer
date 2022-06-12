@@ -1,4 +1,4 @@
-.feed-element .ContentCard__tappable {
+.posts-element .ContentCard__tappable {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -8,18 +8,18 @@
   cursor: pointer;
 }
 
-.feed-element .ContentCard__tappable:hover {
+.posts-element .ContentCard__tappable:hover {
   -webkit-transition: opacity 0.15s ease-out;
   transition: opacity 0.15s ease-out;
 }
 
-.feed-element img {
+.posts-element img {
   border-radius: 8px 0 0 8px !important;
   width: 50%;
   min-width: 50%;
 }
 
-.post-link {
+.post_link {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -28,11 +28,7 @@
           justify-content: flex-end;
 }
 
-.post-date {
-  padding-left: 0;
-}
-
-.event-card_info {
+.post_date {
   padding-left: 0;
 }
 
@@ -51,6 +47,10 @@
 .event_dates {
   margin-top: 10px;
   margin-bottom: 10px;
+  padding-left: 0;
+}
+
+.event_info {
   padding-left: 0;
 }
 
@@ -93,5 +93,22 @@
 
 .story_card.story_card.story_card img {
   border-radius: 18px;
+}
+
+.welcome {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.welcome_button {
+  width: 275px;
 }
 /*# sourceMappingURL=customStyle.css.map */

@@ -24,6 +24,7 @@ import {
   Icon28FavoriteOutline,
   Icon28ChainOutline,
   Icon56UserCircleOutline,
+  Icon28DoorArrowRightOutline,
 } from "@vkontakte/icons";
 import bridge from "@vkontakte/vk-bridge";
 import Form from "./Form";
@@ -34,9 +35,16 @@ type Props = {
   userCustomData: UserCustomData;
   onFormSave: (data: UserCustomData) => void;
   volunteer: Volunteer;
+  onLogout: () => void;
 };
 
-const Profile: FC<Props> = ({ onFormSave, userCustomData, volunteer, id }) => {
+const Profile: FC<Props> = ({
+  onFormSave,
+  userCustomData,
+  volunteer,
+  id,
+  onLogout,
+}) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleFormCancel = () => {
@@ -135,28 +143,35 @@ const Profile: FC<Props> = ({ onFormSave, userCustomData, volunteer, id }) => {
           </SimpleCell>
         </Group>
         <Group header={<Header mode="primary">Действия</Header>}>
-          <SimpleCell
+          <CellButton
             before={<Icon28LogoVkOutline />}
             href="https://vk.com/mosvolonter"
             target="_blank"
           >
             Сообщество ВКонтакте
-          </SimpleCell>
-          <SimpleCell
+          </CellButton>
+          <CellButton
             before={<Icon28FavoriteOutline />}
             onClick={() => {
               bridge.send("VKWebAppAddToFavorites");
             }}
           >
             Добавить приложение в избранное
-          </SimpleCell>
-          <SimpleCell
+          </CellButton>
+          <CellButton
             before={<Icon28ChainOutline />}
             href="https://mosvolonter.ru"
             target="_blank"
           >
             Перейти на сайт Мосволонтера
-          </SimpleCell>
+          </CellButton>
+          <CellButton
+            before={<Icon28DoorArrowRightOutline />}
+            mode="danger"
+            onClick={onLogout}
+          >
+            Выйти
+          </CellButton>
         </Group>
       </Panel>
     </View>

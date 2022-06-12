@@ -83,7 +83,7 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
                   </MiniInfoCell>
                 }
                 onClick={() => handleCardClick(post)}
-                className={isDesktop ? "feed-element" : ""}
+                className={isDesktop ? "posts-element" : ""}
                 src={post.img}
                 maxHeight={240}
                 header={

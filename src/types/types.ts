@@ -1,4 +1,4 @@
-export type Tab = "feed" | "events" | "profile" | "filters";
+export type Tab = "posts" | "events" | "profile" | "filters";
 
 export type Volunteer = {
   workedHours: number;

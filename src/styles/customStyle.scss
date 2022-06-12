@@ -1,4 +1,4 @@
-.feed-element {
+.posts-element {
   .ContentCard__tappable {
     display: flex;
     align-items: center;
@@ -14,16 +14,15 @@
   }
 }
 
-.post-link {
-  display: flex;
-  justify-content: flex-end;
-}
+.post {
+  &_link {
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.post-date {
-  padding-left: 0;
-}
-.event-card_info {
-  padding-left: 0;
+  &_date {
+    padding-left: 0;
+  }
 }
 
 .placeholder {
@@ -34,12 +33,18 @@
   &_title {
     margin-bottom: 20px;
   }
+
   &_text {
     margin-bottom: 20px;
   }
+
   &_dates {
     margin-top: 10px;
     margin-bottom: 10px;
+    padding-left: 0;
+  }
+
+  &_info {
     padding-left: 0;
   }
 }
@@ -73,5 +78,15 @@
   overflow: hidden;
   img {
     border-radius: 18px;
+  }
+}
+
+.welcome {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &_button {
+    width: 275px;
   }
 }

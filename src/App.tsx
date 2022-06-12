@@ -26,13 +26,14 @@ import store from "./redux/store/store";
 import "@vkontakte/vkui/dist/vkui.css";
 import "@vkontakte/vkui/dist/components.css";
 import "./styles/customStyle.css";
+import Welcome from "./components/Welcome";
 
 const App: FC = () => {
   const [popout, setPopout] = useState<ReactElement | null>(
     <ScreenSpinner size="large" />
   );
 
-  const [activeTab, setActiveTab] = useState<Tab>("feed");
+  const [activeTab, setActiveTab] = useState<Tab>("posts");
 
   const onTabChange = (e: React.MouseEvent<HTMLElement>) => {
     setActiveTab(e.currentTarget.dataset.tab as Tab);
@@ -53,8 +54,18 @@ const App: FC = () => {
     defaultUserCustomData
   );
 
+  const [showWelcome, setShowWelcome] = useState(true);
+
   const handleFormSave = (formData: UserCustomData) => {
     setUserCustomData(formData);
+  };
+
+  const handleLogin = () => {
+    setShowWelcome(false);
+  };
+
+  const handleLogout = () => {
+    setShowWelcome(true);
   };
 
   useEffect(() => {
@@ -86,24 +97,29 @@ const App: FC = () => {
                 }
               >
                 <SplitCol>
-                  <Epic
-                    activeStory={activeTab}
-                    tabbar={
-                      <Navigation
-                        onTabChange={onTabChange}
-                        activeTab={activeTab}
+                  {showWelcome ? (
+                    <Welcome onLogin={handleLogin} />
+                  ) : (
+                    <Epic
+                      activeStory={activeTab}
+                      tabbar={
+                        <Navigation
+                          onTabChange={onTabChange}
+                          activeTab={activeTab}
+                        />
+                      }
+                    >
+                      <Posts id="posts" onStoryClick={onStoryClick} />
+                      <Events id="events" />
+                      <Profile
+                        id="profile"
+                        userCustomData={userCustomData}
+                        volunteer={volunteer}
+                        onFormSave={handleFormSave}
+                        onLogout={handleLogout}
                       />
-                    }
-                  >
-                    <Posts id="feed" onStoryClick={onStoryClick} />
-                    <Events id="events" />
-                    <Profile
-                      id="profile"
-                      userCustomData={userCustomData}
-                      volunteer={volunteer}
-                      onFormSave={handleFormSave}
-                    />
-                  </Epic>
+                    </Epic>
+                  )}
                 </SplitCol>
               </SplitLayout>
             </AppRoot>

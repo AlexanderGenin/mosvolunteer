@@ -18,8 +18,8 @@ const Navigation: FC<Props> = ({ onTabChange, activeTab }) => {
     <Tabbar>
       <TabbarItem
         onClick={onTabChange}
-        selected={activeTab === "feed"}
-        data-tab="feed"
+        selected={activeTab === "posts"}
+        data-tab="posts"
         text="Новости"
       >
         <Icon28NewsfeedOutline />
