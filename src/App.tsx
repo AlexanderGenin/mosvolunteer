@@ -26,7 +26,6 @@ import store from "./redux/store/store";
 import "@vkontakte/vkui/dist/vkui.css";
 import "@vkontakte/vkui/dist/components.css";
 import "./styles/customStyle.css";
-import { fetchEvents } from "./redux/features/events/eventsSlice";
 
 const App: FC = () => {
   const [popout, setPopout] = useState<ReactElement | null>(
@@ -35,9 +34,18 @@ const App: FC = () => {
 
   const [activeTab, setActiveTab] = useState<Tab>("feed");
 
-  const stories = useStories();
-  const storiesLength = stories.length;
-  const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
+  const onTabChange = (e: React.MouseEvent<HTMLElement>) => {
+    setActiveTab(e.currentTarget.dataset.tab as Tab);
+  };
+
+  const {
+    stories,
+    activeStoryIndex,
+    onNextStory,
+    onPreviousStory,
+    onStoryClick,
+    onStoriesClose,
+  } = useStories();
 
   const volunteer = defaultVolunteerData;
   const [user, setUser] = useState<UserInfo | null>(null);
@@ -49,30 +57,6 @@ const App: FC = () => {
     setUserCustomData(formData);
   };
 
-  const onTabChange = (e: React.MouseEvent<HTMLElement>) => {
-    setActiveTab(e.currentTarget.dataset.tab as Tab);
-  };
-
-  const handleStoryClick = (id: number) => {
-    setActiveStoryIndex(stories.findIndex((story) => story.id === id));
-  };
-
-  const handleNextStory = () =>
-    setActiveStoryIndex((activeStoryIndex) => {
-      return activeStoryIndex !== null
-        ? activeStoryIndex + 1 === storiesLength
-          ? null
-          : activeStoryIndex + 1
-        : null;
-    });
-
-  const handlePreviousStory = () =>
-    setActiveStoryIndex((activeStoryIndex) => {
-      return activeStoryIndex !== null ? activeStoryIndex - 1 : null;
-    });
-
-  const handleStoriesClose = () => setActiveStoryIndex(null);
-
   useEffect(() => {
     async function fetchUser() {
       const user = await bridge.send("VKWebAppGetUserInfo");
@@ -81,10 +65,6 @@ const App: FC = () => {
     }
 
     fetchUser();
-  }, []);
-
-  useEffect(() => {
-    store.dispatch(fetchEvents());
   }, []);
 
   return (
@@ -99,9 +79,9 @@ const App: FC = () => {
                   <Stories
                     stories={stories}
                     activeStoryIndex={activeStoryIndex}
-                    onNextStory={handleNextStory}
-                    onPreviousStory={handlePreviousStory}
-                    onStoriesClose={handleStoriesClose}
+                    onNextStory={onNextStory}
+                    onPreviousStory={onPreviousStory}
+                    onStoriesClose={onStoriesClose}
                   />
                 }
               >
@@ -115,7 +95,7 @@ const App: FC = () => {
                       />
                     }
                   >
-                    <Posts id="feed" onStoryClick={handleStoryClick} />
+                    <Posts id="feed" onStoryClick={onStoryClick} />
                     <Events id="events" />
                     <Profile
                       id="profile"

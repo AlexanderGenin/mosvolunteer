@@ -23,7 +23,7 @@ export type TEvent = {
   title: string;
   description: string;
   requirements: string[];
-  important: string;
+  important?: string;
   organization: string;
   email: string;
   phone: string;
@@ -32,7 +32,7 @@ export type TEvent = {
   tags: string[];
 };
 
-export type TNews = {
+export type TPost = {
   id: number;
   date: string;
   title: string;
@@ -52,4 +52,11 @@ export type TStory = {
   imgs: string[];
   cover: string;
   watched: boolean;
+};
+
+export type EventsFilters = {
+  query: string;
+  dateStart: string;
+  dateEnd: string;
+  tags: string;
 };

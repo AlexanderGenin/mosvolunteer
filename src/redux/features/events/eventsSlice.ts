@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { mockEvents } from "../../../data/data";
-import { TEvent } from "../../../types/types";
+import { EventsFilters, TEvent } from "../../../types/types";
 import { client } from "../../api/client";
 import { RootState } from "../../store/store";
 
@@ -16,9 +16,10 @@ const initialState: EventsState = {
   error: null,
 };
 
-export const fetchEvents = createAsyncThunk<TEvent[]>(
+export const fetchEvents = createAsyncThunk<TEvent[], EventsFilters>(
   "events/fetchEvents",
-  async () => {
+  async (filters) => {
+    // const q = new URLSearchParams(filters).toString();
     //   const response = await client.get('/fakeApi/events')
     const response = await Promise.resolve({ data: mockEvents });
     return response.data;
@@ -44,15 +45,11 @@ const eventsSlice = createSlice({
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.status = "success";
-        // Add any fetched events to the array
-        state.events = state.events.concat(action.payload);
+        state.events = action.payload;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = "error";
         state.error = action.error.message ?? null;
-      })
-      .addCase(addNewEvent.fulfilled, (state, action) => {
-        state.events.push(action.payload);
       });
   },
 });

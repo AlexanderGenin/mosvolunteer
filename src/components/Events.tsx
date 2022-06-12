@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { FC } from "react";
 import {
   FormLayout,
@@ -23,13 +23,12 @@ import {
   Icon28SlidersOutline,
 } from "@vkontakte/icons";
 import { useAdaptivityIsDesktop } from "@vkontakte/vkui/dist/hooks/useAdaptivity";
-import type { TEvent, DateRange, TagOption } from "../types/types";
+import type { TEvent } from "../types/types";
 import Filters from "./Filters";
-import useTags from "../hooks/useTags";
-import { getOneYearDateRange } from "../utils/utils";
+import { formatDate } from "../utils/utils";
 import Event from "./Event";
-import { selectAllEvents } from "../redux/features/events/eventsSlice";
-import { useSelector } from "react-redux";
+import useEvents from "../redux/hooks/useEvents";
+import { useFilters } from "../hooks/useFilters";
 
 type Props = {
   id: string;
@@ -38,64 +37,42 @@ type Props = {
 type Panels = "filters" | "events" | "event";
 
 const Events: FC<Props> = ({ id }) => {
+  const isDesktop = useAdaptivityIsDesktop();
   const [panel, setPanel] = useState<Panels>("events");
 
-  const isDesktop = useAdaptivityIsDesktop();
-
-  const [datesFilter, setDatesFilter] = useState<DateRange>(
-    getOneYearDateRange()
-  );
-
-  const tags = useTags();
-  const defaultTags = tags.map((tag) => ({ label: tag, value: tag }));
-
-  const [selectedTags, setSelectedTags] = useState<TagOption[]>(defaultTags);
-
-  const events = useSelector(selectAllEvents);
-
   const [currentEvent, setCurrentEvent] = useState<TEvent | null>(null);
-
-  const handleDatesFilterChange = (dates: DateRange) => {
-    setDatesFilter(dates);
-  };
-
-  const handleTagsFilterChange = (tags: TagOption[]) => {
-    setSelectedTags(tags);
-  };
 
   const handleCardClick = (event: TEvent) => {
     setCurrentEvent(event);
     setPanel("event");
   };
 
-  const handleClearFilters = () => {
-    setDatesFilter(getOneYearDateRange());
-    setSelectedTags(defaultTags);
-  };
+  const handleReturn = () => setPanel("events");
 
   const handleSubmitFilters = () => {
     setPanel("events");
   };
 
-  const handleReturn = () => setPanel("events");
+  const {
+    defaultTags,
+    datesFilter,
+    tagsFilter,
+    onDatesFilterChange,
+    onTagsFilterChange,
+    onClearFilters,
+  } = useFilters();
 
-  const filteredEvents = events.filter((event) => {
-    // Check dates intersection
-    const includesDates =
-      new Date(event.dateStart) <= datesFilter[1] &&
-      new Date(event.dateEnd) >= datesFilter[0];
+  const { events, loadEvents } = useEvents();
 
-    const hasTags = event.tags.some((tag) =>
-      selectedTags
-        .reduce((acc, tag) => {
-          acc.push(tag.value);
-          return acc;
-        }, [] as string[])
-        .includes(tag)
-    );
-
-    return hasTags && includesDates;
-  });
+  useEffect(() => {
+    loadEvents({
+      dateStart: formatDate(datesFilter[0]) || "",
+      dateEnd: formatDate(datesFilter[1]) || "",
+      tags: tagsFilter.map((tag) => tag.value).join(",") || "",
+      query: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datesFilter[0], datesFilter[1], tagsFilter.length]);
 
   return (
     <View id={id} activePanel={panel}>
@@ -130,7 +107,7 @@ const Events: FC<Props> = ({ id }) => {
         <Group>
           <Header>Варианты</Header>
           <CardGrid size={isDesktop ? "m" : "l"}>
-            {filteredEvents.map((event) => (
+            {events.map((event) => (
               <ContentCard
                 onClick={() => handleCardClick(event)}
                 key={event.id}
@@ -175,12 +152,12 @@ const Events: FC<Props> = ({ id }) => {
         </PanelHeader>
         <Filters
           datesFilter={datesFilter}
-          onDatesFilterChange={handleDatesFilterChange}
-          eventsCount={filteredEvents.length}
+          onDatesFilterChange={onDatesFilterChange}
+          eventsCount={events.length}
           defaultTags={defaultTags}
-          selectedTags={selectedTags}
-          onTagsFilterChange={handleTagsFilterChange}
-          onClearFilters={handleClearFilters}
+          selectedTags={tagsFilter}
+          onTagsFilterChange={onTagsFilterChange}
+          onClearFilters={onClearFilters}
           onSubmitFilters={handleSubmitFilters}
         />
       </Panel>

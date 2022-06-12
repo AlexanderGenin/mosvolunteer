@@ -1,4 +1,4 @@
-import type { TEvent, TNews, TStory } from "../types/types";
+import type { TEvent, TPost, TStory } from "../types/types";
 
 export const mockVolunteer = {
   hours: 16,
@@ -100,7 +100,7 @@ export const mockEvents: TEvent[] = [
   },
 ];
 
-export const mockNews: TNews[] = [
+export const mockPosts: TPost[] = [
   {
     id: 3,
     title: "Мэр Москвы учредил знак отличия «Волонтёр Москвы»",

@@ -1,7 +1,7 @@
-import { mockNews } from "../data/data";
+import { mockPosts } from "../data/data";
 
-const useNews = () => {
-  return mockNews;
+const usePosts = () => {
+  return mockPosts;
 };
 
-export default useNews;
+export default usePosts;

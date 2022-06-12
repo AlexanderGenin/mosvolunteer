@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { FC } from "react";
 import type { TEvent } from "../types/types";
 import {
@@ -9,6 +9,7 @@ import {
   Gallery,
   Group,
   Header,
+  MiniInfoCell,
   Panel,
   PanelHeader,
   PanelHeaderBack,
@@ -17,15 +18,14 @@ import {
   SimpleCell,
   Text,
   Title,
-  UsersStack,
 } from "@vkontakte/vkui";
 import {
+  Icon20CalendarOutline,
+  Icon20Check,
   Icon28MailOutline,
   Icon28PhoneOutline,
   Icon56UserCircleOutline,
 } from "@vkontakte/icons";
-import useUser from "./useUser";
-import bridge, { UserInfo } from "@vkontakte/vk-bridge";
 
 type Props = {
   id: string;
@@ -34,34 +34,6 @@ type Props = {
 };
 
 const Event: FC<Props> = ({ id, event, onReturn }) => {
-  const [friends, setFriends] = useState<UserInfo[]>([]);
-  const { user } = useUser();
-
-  useEffect(() => {
-    async function fetchFriends() {
-      if (!user) return;
-
-      const { access_token } = await bridge.send("VKWebAppGetAuthToken", {
-        app_id: 8180488,
-        scope: "friends",
-      });
-
-      const { response } = await bridge.send("VKWebAppCallAPIMethod", {
-        method: "friends.getLists",
-        params: {
-          user_id: user.id,
-          fields: "photo_100",
-          v: "5.131",
-          access_token,
-        },
-      });
-
-      setFriends(response.items);
-    }
-
-    fetchFriends();
-  }, []);
-
   if (!event)
     return (
       <Panel id={id}>
@@ -99,29 +71,56 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
             ))}
           </Gallery>
           <Div>
+            <MiniInfoCell
+              className="event_dates"
+              before={<Icon20CalendarOutline />}
+            >
+              {event.dateStart} - {event.dateEnd}
+            </MiniInfoCell>
             <Title className="event_title" level="1">
               {event.title}
             </Title>
             <Text className="event_text">{event.description}</Text>
           </Div>
         </Group>
+        <Group header={<Header mode="primary">Требования</Header>}>
+          {event.requirements.map((req) => (
+            <MiniInfoCell before={<Icon20Check />}>{req}</MiniInfoCell>
+          ))}
+        </Group>
         <Group header={<Header mode="primary">Контакты</Header>}>
           <SimpleCell before={<Icon28MailOutline />}>{event.email}</SimpleCell>
           <SimpleCell before={<Icon28PhoneOutline />}>{event.phone}</SimpleCell>
         </Group>
         <Group header={<Header mode="primary">Вакансии</Header>}>
-          <Group header={<Header mode="primary">Набор</Header>}>
-            <FormItem id="progresslabel" top="200/500">
-              <UsersStack
-                photos={friends.map((friend) => friend.photo_100)}
-                size="m"
-                visibleCount={3}
-                layout="vertical"
-              >
-                Алексей, Илья, Михаил
-                <br />и ещё 3 человека
-              </UsersStack>
-              <Progress aria-labelledby="progresslabel" value={40} />
+          <Group header={<Header mode="primary">Волонтер пресс службы</Header>}>
+            <FormItem id="progresslabel" top="5/15">
+              <Progress aria-labelledby="progresslabel" value={33.3} />
+            </FormItem>
+            <FormItem style={{ display: "flex", justifyContent: "center" }}>
+              <Button size="l" appearance="accent">
+                Записаться
+              </Button>
+            </FormItem>
+          </Group>
+          <Group header={<Header mode="primary">Волонтер проводник</Header>}>
+            <FormItem id="progresslabel" top="20/40">
+              <Progress aria-labelledby="progresslabel" value={50} />
+            </FormItem>
+            <FormItem style={{ display: "flex", justifyContent: "center" }}>
+              <Button size="l" appearance="accent">
+                Записаться
+              </Button>
+            </FormItem>
+          </Group>
+          <Group header={<Header mode="primary">Менеджер команд</Header>}>
+            <FormItem id="progresslabel" top="4/4">
+              <Progress aria-labelledby="progresslabel" value={100} />
+            </FormItem>
+            <FormItem style={{ display: "flex", justifyContent: "center" }}>
+              <Button size="l" appearance="accent" disabled>
+                Запись завершена
+              </Button>
             </FormItem>
           </Group>
         </Group>

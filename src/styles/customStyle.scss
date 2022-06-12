@@ -14,12 +14,12 @@
   }
 }
 
-.news-link {
+.post-link {
   display: flex;
   justify-content: flex-end;
 }
 
-.news-date {
+.post-date {
   padding-left: 0;
 }
 .event-card_info {
@@ -32,11 +32,15 @@
 
 .event {
   &_title {
-    margin-top: 20px;
     margin-bottom: 20px;
   }
   &_text {
     margin-bottom: 20px;
+  }
+  &_dates {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 0;
   }
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { FC } from "react";
 import {
   PanelHeader,
@@ -15,24 +15,39 @@ import {
   View,
   Panel,
 } from "@vkontakte/vkui";
-import useNews from "../hooks/useNews";
+import usePosts from "../hooks/useNews";
 import { Icon20CalendarOutline } from "@vkontakte/icons";
 import { mockStories } from "../data/data";
 import { useAdaptivityIsDesktop } from "@vkontakte/vkui/dist/hooks/useAdaptivity";
+import { TPost } from "../types/types";
+import Post from "./Post";
 
 type Props = {
   id: string;
   onStoryClick: (id: number) => void;
 };
 
+type Panels = "posts" | "post";
+
 const Posts: FC<Props> = ({ id, onStoryClick }) => {
   const isDesktop = useAdaptivityIsDesktop();
 
-  const news = useNews();
+  const [panel, setPanel] = useState<Panels>("posts");
+
+  const posts = usePosts();
+
+  const handleReturn = () => setPanel("posts");
+
+  const [currentPost, setCurrentPost] = useState<TPost | null>(null);
+
+  const handleCardClick = (post: TPost) => {
+    setCurrentPost(post);
+    setPanel("post");
+  };
 
   return (
-    <View id={id} activePanel="feed">
-      <Panel id="feed">
+    <View id={id} activePanel={panel}>
+      <Panel id="posts">
         <PanelHeader>Новости</PanelHeader>
         <Group>
           <CardScroll>
@@ -56,35 +71,35 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
           </CardScroll>
           <Spacing size={24} />
           <CardGrid size="l">
-            {news.map((news) => (
+            {posts.map((post) => (
               <ContentCard
-                key={news.id}
+                key={post.id}
                 subtitle={
                   <MiniInfoCell
-                    className="news-date"
+                    className="post-date"
                     before={<Icon20CalendarOutline />}
                   >
-                    {news.date}
+                    {post.date}
                   </MiniInfoCell>
                 }
+                onClick={() => handleCardClick(post)}
                 className={isDesktop ? "feed-element" : ""}
-                onClick={() => {}}
-                src={news.img}
+                src={post.img}
                 maxHeight={240}
                 header={
-                  news.title.length > 50
-                    ? news.title.slice(0, 48) + "..."
-                    : news.title
+                  post.title.length > 50
+                    ? post.title.slice(0, 48) + "..."
+                    : post.title
                 }
                 text={
                   <>
                     <Text>
-                      {news.description.length > 150
-                        ? news.description.slice(0, 148) + "..."
-                        : news.description}
+                      {post.description.length > 150
+                        ? post.description.slice(0, 148) + "..."
+                        : post.description}
                     </Text>
-                    <Div className="news-link">
-                      <Link href="/profile">Подробнее</Link>
+                    <Div className="post-link">
+                      <Link>Подробнее</Link>
                     </Div>
                   </>
                 }
@@ -93,6 +108,7 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
           </CardGrid>
         </Group>
       </Panel>
+      <Post id="post" onReturn={handleReturn} post={currentPost} />
     </View>
   );
 };
