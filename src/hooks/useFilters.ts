@@ -34,6 +34,7 @@ export const useFilters = () => {
 
   useEffect(() => {
     loadTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

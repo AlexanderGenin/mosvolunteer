@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Group,
   FormLayout,
@@ -12,11 +12,19 @@ import {
   PanelHeader,
   PanelHeaderBack,
   FormLayoutGroup,
+  Banner,
+  IconButton,
 } from "@vkontakte/vkui";
 import type { FC } from "react";
-import { EventData, Vacancy } from "../types/types";
+import { EventData, TagOption, Offer } from "../types/types";
 import { defaultEventData } from "../data/defaults";
-import { Icon28AddOutline } from "@vkontakte/icons";
+import {
+  Icon16Clear,
+  Icon28AddOutline,
+  Icon28WarningTriangleOutline,
+} from "@vkontakte/icons";
+import useTags from "../redux/hooks/useTags";
+import { ChipsSelect } from "@vkontakte/vkui/dist/unstable";
 
 type Props = {
   id: string;
@@ -25,14 +33,30 @@ type Props = {
   onEventFormCancel: () => void;
 };
 
+type TDatePicker = {
+  day: number;
+  month: number;
+  year: number;
+};
+
 const AddEvent: FC<Props> = ({
   id,
   onReturn,
   onEventFormSave,
   onEventFormCancel,
 }) => {
+  const { tags, loadTags } = useTags();
+  const defaultTags = tags.map((tag) => ({ label: tag, value: tag }));
+
   const [formData, setFormData] = useState<EventData>(defaultEventData);
-  const { email, phone, title, description, vacancies } = formData;
+  const {
+    email,
+    phone,
+    title,
+    description,
+    offers,
+    tags: selectedTags,
+  } = formData;
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,49 +65,96 @@ const AddEvent: FC<Props> = ({
     setFormData((formData) => ({ ...formData, [name]: value }));
   };
 
-  const handleAddVacancy = () => {
-    const lastIndex = vacancies[vacancies.length - 1]?.id ?? -1;
+  const handleAddOffer = () => {
+    const lastIndex = offers[offers.length - 1]?.id ?? -1;
     const newIndex = lastIndex + 1;
 
-    const newVacancy = {
+    const newOffer = {
       id: newIndex,
-      name: "",
+      title: "",
       capacity: 0,
     };
 
     setFormData((formData) => ({
       ...formData,
-      vacancies: [...vacancies, newVacancy],
+      offers: [...offers, newOffer],
     }));
   };
 
-  const handleVacancyNameChange = (
+  const handleOfferNameChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    editVacancy: Vacancy
+    editOffer: Offer
   ) => {
-    const vacancyIndex = vacancies.findIndex(
-      (vacancy) => vacancy.id === editVacancy.id
-    );
-    editVacancy.name = e.currentTarget.value;
+    const offerIndex = offers.findIndex((offer) => offer.id === editOffer.id);
+    editOffer.title = e.currentTarget.value;
     setFormData((formData) => ({
       ...formData,
-      vacancies: Object.assign([], vacancies, { [vacancyIndex]: editVacancy }),
+      offers: Object.assign([], offers, { [offerIndex]: editOffer }),
     }));
   };
 
-  const handleVacancyCapacityChange = (
+  const handleOfferCapacityChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    editVacancy: Vacancy
+    editOffer: Offer
   ) => {
-    const vacancyIndex = vacancies.findIndex(
-      (vacancy) => vacancy.id === editVacancy.id
-    );
-    editVacancy.capacity = +e.currentTarget.value;
+    const offerIndex = offers.findIndex((offer) => offer.id === editOffer.id);
+    editOffer.capacity = +e.currentTarget.value;
     setFormData((formData) => ({
       ...formData,
-      vacancies: Object.assign([], vacancies, { [vacancyIndex]: editVacancy }),
+      offers: Object.assign([], offers, { [offerIndex]: editOffer }),
     }));
   };
+
+  const handleDateStartChange = (date: TDatePicker) => {
+    setFormData((formData) => ({
+      ...formData,
+      date_start: `${date.year}-${date.month
+        .toString()
+        .padStart(2, "0")}-${date.day.toString().padStart(2, "0")}`,
+    }));
+  };
+
+  const handleDateEndChange = (date: TDatePicker) => {
+    setFormData((formData) => ({
+      ...formData,
+      date_end: `${date.year}-${date.month
+        .toString()
+        .padStart(2, "0")}-${date.day.toString().padStart(2, "0")}`,
+    }));
+  };
+
+  const handleTagsChange = (tags: TagOption[]) => {
+    setFormData((formData) => ({
+      ...formData,
+      tags: [
+        ...tags.reduce((acc, tag) => {
+          acc.push(tag.value);
+          return acc;
+        }, [] as string[]),
+      ],
+    }));
+  };
+
+  const handleTagsClear = () => {
+    setFormData((formData) => ({
+      ...formData,
+      tags: [],
+    }));
+  };
+
+  const defaultTagsProps = {
+    value: selectedTags.map((tag) => ({ label: tag, value: tag })),
+    onChange: handleTagsChange,
+    options: defaultTags,
+    placeholder: "Не выбраны",
+    creatable: true,
+    creatableText: "",
+  };
+
+  useEffect(() => {
+    loadTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Panel id={id}>
@@ -91,6 +162,10 @@ const AddEvent: FC<Props> = ({
         Создание события
       </PanelHeader>
       <Group>
+        <Banner
+          before={<Icon28WarningTriangleOutline />}
+          text="Минимально необходимо заполнить поля дат начала и окончания события, а также тегов. Иначе будет ошибка. Валидация пока отсутствует"
+        />
         <FormLayout>
           <FormItem top="Название">
             <Input type="text" name="title" value={title} onChange={onChange} />
@@ -110,14 +185,11 @@ const AddEvent: FC<Props> = ({
                   month: new Date().getMonth(),
                   year: new Date().getFullYear(),
                 }}
-                max={{ day: 1, month: 1, year: 2050 }}
-                onDateChange={(value) => {
-                  console.log(value);
-                }}
+                max={{ day: 1, month: 1, year: 2030 }}
+                onDateChange={handleDateStartChange}
                 dayPlaceholder="День"
                 monthPlaceholder="Месяц"
                 yearPlaceholder="Год"
-                onChange={(e) => console.log(e)}
               />
             </FormItem>
             <FormItem top="Дата окончания">
@@ -127,14 +199,11 @@ const AddEvent: FC<Props> = ({
                   month: new Date().getMonth(),
                   year: new Date().getFullYear(),
                 }}
-                max={{ day: 1, month: 1, year: 2050 }}
-                onDateChange={(value) => {
-                  console.log(value);
-                }}
+                max={{ day: 1, month: 1, year: 2030 }}
+                onDateChange={handleDateEndChange}
                 dayPlaceholder="День"
                 monthPlaceholder="Месяц"
                 yearPlaceholder="Год"
-                onChange={(e) => console.log(e)}
               />
             </FormItem>
           </FormLayoutGroup>
@@ -156,22 +225,22 @@ const AddEvent: FC<Props> = ({
               />
             </FormItem>
           </FormLayoutGroup>
-          {vacancies.map((vacancy) => (
-            <FormLayoutGroup mode="horizontal" key={vacancy.id}>
+          {offers.map((offer) => (
+            <FormLayoutGroup mode="horizontal" key={offer.id}>
               <FormItem top="Название вакансии">
                 <Input
                   type="text"
-                  name={`name_${vacancy.id}`}
-                  value={vacancy.name}
-                  onChange={(e) => handleVacancyNameChange(e, vacancy)}
+                  name={`name_${offer.id}`}
+                  value={offer.title}
+                  onChange={(e) => handleOfferNameChange(e, offer)}
                 />
               </FormItem>
               <FormItem top="Количество волонтеров">
                 <Input
                   type="number"
-                  name={`capacity_${vacancy.id}`}
-                  value={vacancy.capacity}
-                  onChange={(e) => handleVacancyCapacityChange(e, vacancy)}
+                  name={`capacity_${offer.id}`}
+                  value={offer.capacity}
+                  onChange={(e) => handleOfferCapacityChange(e, offer)}
                 />
               </FormItem>
             </FormLayoutGroup>
@@ -183,10 +252,20 @@ const AddEvent: FC<Props> = ({
               mode="tertiary"
               stretched
               before={<Icon28AddOutline />}
-              onClick={handleAddVacancy}
+              onClick={handleAddOffer}
             >
               Добавить вакансию
             </Button>
+          </FormItem>
+          <FormItem top="Теги">
+            <ChipsSelect
+              {...defaultTagsProps}
+              after={
+                <IconButton hoverMode="opacity" onClick={handleTagsClear}>
+                  <Icon16Clear />
+                </IconButton>
+              }
+            />
           </FormItem>
           <FormItem>
             <ButtonGroup mode="horizontal" stretched>

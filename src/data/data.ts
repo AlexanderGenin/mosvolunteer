@@ -8,6 +8,21 @@ export const mockVolunteer = {
   status: "Участник",
 };
 
+export const mockTags: { name: string }[] = [
+  {
+    name: "Дети и молодежь",
+  },
+  {
+    name: "Культура и искусство",
+  },
+  {
+    name: "Здравоохранение и ЗОЖ",
+  },
+  {
+    name: "Старшее поколение",
+  },
+];
+
 export const mockEvents: TEvent[] = [
   {
     id: 1,
@@ -34,12 +49,7 @@ export const mockEvents: TEvent[] = [
     email: "ProkofevIA@mos.ru",
     phone: "8 (499) 722-69-94",
     orgName: "Прокофьев Игорь",
-    tags: [
-      "Волонтёр",
-      "Медиаволонтёрство",
-      "Постоянная программа",
-      "Регистрация открыта",
-    ],
+    tags: mockTags,
   },
   {
     id: 2,
@@ -64,7 +74,7 @@ export const mockEvents: TEvent[] = [
     email: "otdelvc@mosvolonter.ru",
     phone: "+7 (499) 722-69-98",
     orgName: "Рашит или Светлана",
-    tags: ["55+", "Волонтёр", "Постоянная программа", "Регистрация открыта"],
+    tags: mockTags,
   },
   {
     id: 3,
@@ -96,7 +106,7 @@ export const mockEvents: TEvent[] = [
     organization: "ГБУ города Москвы «Мосволонтёр»",
     email: "event@mosvolonter.ru",
     phone: "8 (499) 722-69-94",
-    tags: ["14+", "Волонтёр", "Событийное волонтёрство", "Регистрация открыта"],
+    tags: mockTags,
   },
 ];
 

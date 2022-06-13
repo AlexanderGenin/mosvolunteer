@@ -23,6 +23,7 @@ import {
 import {
   Icon20CalendarOutline,
   Icon20Check,
+  Icon20Favorite,
   Icon28AdvertisingCircleFillRed,
   Icon28MailOutline,
   Icon28PhoneOutline,
@@ -34,9 +35,10 @@ type Props = {
   id: string;
   event: TEvent | null;
   onReturn: () => void;
+  onLookApplications: (applied: number[], accepted: number[]) => void;
 };
 
-const Event: FC<Props> = ({ id, event, onReturn }) => {
+const Event: FC<Props> = ({ id, event, onReturn, onLookApplications }) => {
   const { isAdmin } = useAuth();
 
   if (!event)
@@ -71,7 +73,7 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
       <Card>
         <Group>
           <Gallery bullets="dark" showArrows>
-            {event.imgs.map((img, index) => (
+            {event.imgs?.map((img, index) => (
               <img src={img} alt="" key={index} />
             ))}
           </Gallery>
@@ -80,7 +82,7 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
               className="event_dates"
               before={<Icon20CalendarOutline />}
             >
-              {event.date_start} - {event.date_end}
+              {event.date_start?.slice(0, 10)} - {event.date_end?.slice(0, 10)}
             </MiniInfoCell>
             <Title className="event_title" level="1">
               {event.title}
@@ -89,7 +91,7 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
           </Div>
         </Group>
         <Group header={<Header mode="primary">Требования</Header>}>
-          {event.requirements.map((req, index) => (
+          {event.requirements?.map((req, index) => (
             <MiniInfoCell before={<Icon20Check />} key={index}>
               {req}
             </MiniInfoCell>
@@ -107,55 +109,50 @@ const Event: FC<Props> = ({ id, event, onReturn }) => {
           <SimpleCell before={<Icon28MailOutline />}>{event.email}</SimpleCell>
           <SimpleCell before={<Icon28PhoneOutline />}>{event.phone}</SimpleCell>
         </Group>
+        <Group header={<Header mode="primary">Теги</Header>}>
+          {event.tags?.map((tag, index) => (
+            <MiniInfoCell before={<Icon20Favorite />} key={index}>
+              {tag.name}
+            </MiniInfoCell>
+          ))}
+        </Group>
         <Group header={<Header mode="primary">Вакансии</Header>}>
-          <Group header={<Header mode="primary">Волонтер пресс службы</Header>}>
-            <FormItem id="progresslabel" top="5/15">
-              <Progress aria-labelledby="progresslabel" value={33.3} />
-            </FormItem>
-            <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              {isAdmin ? (
-                <Button size="l" appearance="accent">
-                  Посмотреть заявки
-                </Button>
-              ) : (
-                <Button size="l" appearance="accent">
-                  Записаться
-                </Button>
-              )}
-            </FormItem>
-          </Group>
-          <Group header={<Header mode="primary">Волонтер проводник</Header>}>
-            <FormItem id="progresslabel" top="20/40">
-              <Progress aria-labelledby="progresslabel" value={50} />
-            </FormItem>
-            <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              {isAdmin ? (
-                <Button size="l" appearance="accent">
-                  Посмотреть заявки
-                </Button>
-              ) : (
-                <Button size="l" appearance="accent">
-                  Записаться
-                </Button>
-              )}
-            </FormItem>
-          </Group>
-          <Group header={<Header mode="primary">Менеджер команд</Header>}>
-            <FormItem id="progresslabel" top="4/4">
-              <Progress aria-labelledby="progresslabel" value={100} />
-            </FormItem>
-            <FormItem style={{ display: "flex", justifyContent: "center" }}>
-              {isAdmin ? (
-                <Button size="l" appearance="accent">
-                  Посмотреть заявки
-                </Button>
-              ) : (
-                <Button size="l" appearance="accent" disabled>
-                  Запись завершена
-                </Button>
-              )}
-            </FormItem>
-          </Group>
+          {event.offers_json?.offers.map((offer, index) => (
+            <Group
+              key={index}
+              header={<Header mode="primary">{offer.title}</Header>}
+            >
+              <FormItem
+                id="progresslabel"
+                top={`${offer.applied?.length ?? 0}/${offer.capacity}`}
+              >
+                <Progress
+                  aria-labelledby="progresslabel"
+                  value={(+(offer.applied?.length ?? 0) / offer.capacity) * 100}
+                />
+              </FormItem>
+              <FormItem style={{ display: "flex", justifyContent: "center" }}>
+                {isAdmin ? (
+                  <Button
+                    size="l"
+                    appearance="accent"
+                    onClick={() =>
+                      onLookApplications(
+                        offer.applied ?? [],
+                        offer.accepted ?? []
+                      )
+                    }
+                  >
+                    Посмотреть заявки
+                  </Button>
+                ) : (
+                  <Button size="l" appearance="accent">
+                    Записаться
+                  </Button>
+                )}
+              </FormItem>
+            </Group>
+          ))}
         </Group>
       </Card>
     </Panel>

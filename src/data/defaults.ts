@@ -27,6 +27,6 @@ export const defaultEventData: EventData = {
   description: "",
   email: "",
   phone: "",
-  tags: [""],
-  vacancies: [],
+  tags: [],
+  offers: [],
 };

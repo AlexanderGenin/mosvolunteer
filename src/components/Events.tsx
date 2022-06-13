@@ -31,12 +31,13 @@ import useEvents from "../redux/hooks/useEvents";
 import { useFilters } from "../hooks/useFilters";
 import useAuth from "../hooks/useAuth";
 import AddEvent from "./AddEvent";
+import Applications from "./Applications";
 
 type Props = {
   id: string;
 };
 
-type Panels = "filters" | "events" | "event" | "addEvent";
+type Panels = "filters" | "events" | "event" | "addEvent" | "applications";
 
 const Events: FC<Props> = ({ id }) => {
   const isDesktop = useAdaptivityIsDesktop();
@@ -59,6 +60,7 @@ const Events: FC<Props> = ({ id }) => {
 
   const handleEventFormSave = (formData: EventData) => {
     addEvent(formData);
+    setPanel("events");
   };
 
   const {
@@ -73,6 +75,18 @@ const Events: FC<Props> = ({ id }) => {
   } = useFilters();
 
   const { events, loadEvents, addEvent } = useEvents();
+
+  const [applied, setApplied] = useState<number[]>([]);
+  const [accepted, setAccepted] = useState<number[]>([]);
+
+  const handleLookApplications = (
+    appliedUsers: number[],
+    acceptedUsers: number[]
+  ) => {
+    setApplied(appliedUsers);
+    setAccepted(acceptedUsers);
+    setPanel("applications");
+  };
 
   useEffect(() => {
     loadEvents({
@@ -186,12 +200,23 @@ const Events: FC<Props> = ({ id }) => {
           onSubmitFilters={handleSubmitFilters}
         />
       </Panel>
-      <Event id="event" onReturn={handleReturn} event={currentEvent} />
+      <Event
+        id="event"
+        onReturn={handleReturn}
+        onLookApplications={handleLookApplications}
+        event={currentEvent}
+      />
       <AddEvent
         id="addEvent"
         onReturn={handleReturn}
         onEventFormCancel={handleReturn}
         onEventFormSave={handleEventFormSave}
+      />
+      <Applications
+        id="applications"
+        applied={applied}
+        accepted={accepted}
+        onReturn={() => setPanel("event")}
       />
     </View>
   );

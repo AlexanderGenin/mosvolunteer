@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { FC } from "react";
 import {
   PanelHeader,
@@ -15,12 +15,12 @@ import {
   View,
   Panel,
 } from "@vkontakte/vkui";
-import usePosts from "../hooks/useNews";
 import { Icon20CalendarOutline } from "@vkontakte/icons";
 import { mockStories } from "../data/data";
 import { useAdaptivityIsDesktop } from "@vkontakte/vkui/dist/hooks/useAdaptivity";
 import { TPost } from "../types/types";
 import Post from "./Post";
+import usePosts from "../redux/hooks/usePosts";
 
 type Props = {
   id: string;
@@ -34,7 +34,7 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
 
   const [panel, setPanel] = useState<Panels>("posts");
 
-  const posts = usePosts();
+  const { posts, loadPosts } = usePosts();
 
   const handleReturn = () => setPanel("posts");
 
@@ -44,6 +44,11 @@ const Posts: FC<Props> = ({ id, onStoryClick }) => {
     setCurrentPost(post);
     setPanel("post");
   };
+
+  useEffect(() => {
+    loadPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View id={id} activePanel={panel}>

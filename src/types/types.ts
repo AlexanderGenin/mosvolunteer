@@ -29,7 +29,10 @@ export type TEvent = {
   phone: string;
   orgName?: string;
   services?: string[];
-  tags: string[];
+  tags: { name: string }[];
+  offers_json?: {
+    offers: Offer[];
+  };
 };
 
 export type TPost = {
@@ -69,11 +72,17 @@ export type EventData = {
   email: string;
   phone: string;
   tags: string[];
-  vacancies: Vacancy[];
+  offers: {
+    id: number;
+    title: string;
+    capacity: number;
+  }[];
 };
 
-export type Vacancy = {
+export type Offer = {
   id: number;
-  name: string;
+  title: string;
   capacity: number;
+  applied?: number[];
+  accepted?: number[];
 };

@@ -3,17 +3,12 @@ import { EventData, EventsFilters, TEvent } from "../../types/types";
 import { client } from "../api/client";
 import { RootState } from "../store/store";
 import { prepareSearchParams } from "../../utils/utils";
+// import { mockEvents } from "../../data/data";
 
 type EventsState = {
   status: "error" | "success" | "idle" | "pending";
   error: string | null;
   events: TEvent[];
-};
-
-type EventState = {
-  status: "error" | "success" | "idle" | "pending";
-  error: string | null;
-  event: TEvent;
 };
 
 const initialState: EventsState = {
@@ -28,9 +23,11 @@ export const fetchEvents = createAsyncThunk<TEvent[], EventsFilters>(
     try {
       const q = prepareSearchParams(filters);
       const response = await client.get(`events?${q}`);
+      // const response = await Promise.resolve({ data: mockEvents });
       return response.data;
     } catch (e) {
       console.error(e);
+      return [];
     }
   }
 );
@@ -39,6 +36,7 @@ export const addNewEvent = createAsyncThunk<TEvent, EventData>(
   "events/addNewEvent",
   async (newEvent) => {
     try {
+      console.log(newEvent);
       const response = await client.post("events", newEvent);
       return response.data;
     } catch (e) {
@@ -63,11 +61,12 @@ const eventsSlice = createSlice({
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = "error";
         state.error = action.error.message ?? null;
+      })
+      .addCase(addNewEvent.fulfilled, (state, action) => {
+        state.events.push(action.payload);
       });
   },
 });
-
-// export const { eventAdded, eventUpdated, reactionAdded } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
 

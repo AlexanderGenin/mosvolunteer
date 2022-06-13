@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "../api/client";
 import { RootState } from "../store/store";
+// import { mockTags } from "../../data/data";
 
 type TagsState = {
   status: "error" | "success" | "idle" | "pending";
@@ -19,9 +20,11 @@ export const fetchTags = createAsyncThunk<{ name: string }[]>(
   async () => {
     try {
       const response = await client.get(`tags`);
+      //   const response = await Promise.resolve({ data: mockTags });
       return response.data;
     } catch (error) {
       console.error(error);
+      return [];
     }
   }
 );
