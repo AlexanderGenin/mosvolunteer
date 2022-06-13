@@ -124,11 +124,13 @@ const Event: FC<Props> = ({ id, event, onReturn, onLookApplications }) => {
             >
               <FormItem
                 id="progresslabel"
-                top={`${offer.applied?.length ?? 0}/${offer.capacity}`}
+                top={`${offer.accepted?.length ?? 0}/${offer.capacity}`}
               >
                 <Progress
                   aria-labelledby="progresslabel"
-                  value={(+(offer.applied?.length ?? 0) / offer.capacity) * 100}
+                  value={
+                    (+(offer.accepted?.length ?? 0) / offer.capacity) * 100
+                  }
                 />
               </FormItem>
               <FormItem style={{ display: "flex", justifyContent: "center" }}>
